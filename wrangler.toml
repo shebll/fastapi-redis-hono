@@ -1,0 +1,6 @@
+name = "fastapi"
+compatibility_date = "2024-04-02"
+
+[vars]
+UPSTASH_REDIS_REST_TOKEN = "AdO9AAIncDEyNmU4OTRmMTg4Mzk0MmE4OWE3NmI3MDQyNTVhNDFiMXAxNTQyMDU"
+UPSTASH_REDIS_REST_URL = "https://sharp-bluebird-54205.upstash.io"

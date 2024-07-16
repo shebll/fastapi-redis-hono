@@ -1,6 +1,7 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 import { Hono } from "hono";
 import { env } from "hono/adapter";
+import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 import type { PageConfig } from "next";
 
@@ -14,6 +15,8 @@ type envConfig = {
 };
 
 const app = new Hono().basePath("/api");
+
+app.use("/*", cors());
 
 app.get("/search", async (c) => {
   const { UPSTASH_REDIS_REST_TOKEN, UPSTASH_REDIS_REST_URL } =
@@ -50,14 +53,15 @@ app.get("/search", async (c) => {
     // ---------------------------------------------
 
     const end = performance.now();
-    return c.json({ results: res, duration: end - start });
+    return c.json({ countries: res, duration: end - start });
   } catch (error) {
     console.error(error);
     return c.json(
-      { results: [], message: "something went wrong" },
+      { countries: [], message: "something went wrong" },
       { status: 500 }
     );
   }
 });
 
 export const GET = handle(app);
+export default app as never;
