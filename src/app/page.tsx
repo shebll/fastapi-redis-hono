@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { CommandInput } from "cmdk";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -12,70 +20,80 @@ export default function Home() {
         duration: number;
       }
     | undefined
-  >({
-    countries: ["ahmed", "sad", "asdasd"],
-    duration: 1111,
-  });
+  >();
 
   useEffect(() => {
     const fetchCountries = async () => {
+      if (!input) {
+        return setResult(undefined);
+      }
       try {
-        const res = await fetch(`/api/search?q=${input}`);
+        const res = await fetch(
+          `https://fastapi.shebblloll.workers.dev/api/search?q=${input}`
+        );
+        const data = await res.json();
+        console.log(data);
+        setResult(data);
       } catch (error) {
         setError(error as string);
         console.log(error);
       }
     };
-    // if (!input) {
-    //   return setResult(undefined);
-    // }
     fetchCountries();
   }, [input]);
 
   return (
-    <main>
-      <section className="container mx-auto mt-[200px] flex flex-col gap-20 justify-center items-center">
+    <main className="h-screen w-screen pt-40 grainy">
+      <section className="container mx-auto flex flex-col gap-20 justify-center items-center duration-700 animate-in animate fade-in-20 slide-in-from-bottom-10">
         <div className="flex flex-col justify-center items-center gap-6 text-center">
-          <h1 className="text-6xl font-bold">SpeedSearch ⚡</h1>
-          <p className="text-gray-400 text-2xl">
+          <h1 className="text-4xl sm:text-6xl font-bold">SpeedSearch ⚡</h1>
+          <p className="text-gray-400 sm:text-2xl">
             A high-performance API built with Hono, Next.js and Cloudflare.{" "}
             <br /> Type a query below and get your results in miliseconds.
           </p>
         </div>
-        <div className="flex gap-2 flex-col">
-          <label htmlFor="country" className="ml-2 text-gray-700">
+        <div className="flex gap-2 flex-col w-fit sm:w-[600px]">
+          {/* <label htmlFor="country" className="ml-2 text-gray-700">
             Enter Country Name:
-          </label>
-          <div className="flex flex-col text-lg bg-gray-200 outline-none  py-2 rounded-md text-gray-600 w-fit">
-            <input
+          </label> */}
+          <Command className=" outline-none p-2">
+            <CommandInput
               value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-              }}
-              type="text"
-              id="country"
-              name="country"
-              placeholder="Country Name"
-              className="bg-gray-200 outline-none px-5  rounded-md text-gray-600 w-fit"
+              onValueChange={setInput}
+              placeholder="Search countries..."
+              className="placeholder:text-zinc-500 outline-none px-3"
             />
-            <div className="flex flex-col mt-2">
-              <div className="flex flex-col">
-                {result &&
-                  result.countries.map((country, i) => (
-                    <p
-                      className="px-5 py-1 hover:bg-gray-100 transition-all"
-                      key={i}
+            <CommandList>
+              {result?.countries.length === 0 ? (
+                <CommandEmpty>No results found.</CommandEmpty>
+              ) : null}
+
+              {result?.countries ? (
+                <CommandGroup heading="Results">
+                  {result?.countries.map((result) => (
+                    <CommandItem
+                      key={result}
+                      value={result}
+                      onSelect={setInput}
                     >
-                      {country}
-                    </p>
+                      {result}
+                    </CommandItem>
                   ))}
-              </div>
-              <div className="flex gap-10 text-base text-gray-500 px-4 pt-1 border-t-2 border-gray-100">
-                <p>{result?.countries.length} Countries Found</p>
-                <p>Duration: {result?.duration} ms</p>
-              </div>
-            </div>
-          </div>
+                </CommandGroup>
+              ) : null}
+
+              {result?.countries ? (
+                <>
+                  <div className="h-px w-full bg-zinc-200" />
+
+                  <p className="p-2 text-xs text-zinc-500">
+                    Found {result.countries.length} results in{" "}
+                    {result?.duration.toFixed(0)}ms
+                  </p>
+                </>
+              ) : null}
+            </CommandList>
+          </Command>
         </div>
       </section>
     </main>
