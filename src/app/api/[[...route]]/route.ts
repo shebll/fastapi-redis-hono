@@ -5,9 +5,9 @@ import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 import type { PageConfig } from "next";
 
-export const config: PageConfig = {
-  runtime: "edge",
-};
+// export const config: PageConfig = {
+//   runtime: "edge",
+// };
 
 type envConfig = {
   UPSTASH_REDIS_REST_TOKEN: string;
