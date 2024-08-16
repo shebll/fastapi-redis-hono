@@ -29,7 +29,7 @@ export default function Home() {
       }
       try {
         const res = await fetch(
-          `https://fastapi.shebblloll.workers.dev/api/search?q=${input}`
+          `https://fastapi.shebl.workers.dev/api/search?q=${input}`
         );
         const data = await res.json();
         console.log(data);
